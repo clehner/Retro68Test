@@ -1,5 +1,5 @@
-.DS_Store
-*.o
-clib
 lib
+*.o
 *.68k
+*.dsk
+*.bin

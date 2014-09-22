@@ -1,40 +1,40 @@
 #
-# Requires https://github.com/ksherlock/mpw and an
-# install of MPW in the emulator's root (~/mpw)
-# - I symlink to my MPW install in /Applications
+# Requires https://github.com/autc04/Retro68
+# Update TOOLCHAIN to point to your build.
 #
 
-MPWROOT=/Applications/MPW-GM
+TOOLCHAIN=/opt/Retro68-build/toolchain
+ARCH=m68k-unknown-elf
 
-LIBRARYDIR=$(MPWROOT)/Interfaces\&Libraries/Libraries/Libraries
-CLIBRARYDIR=$(MPWROOT)/Interfaces\&Libraries/Libraries/CLibraries
-RINCLUDES=$(MPWROOT)/Interfaces\&Libraries/Interfaces/RIncludes
+CC=$(TOOLCHAIN)/bin/$(ARCH)-gcc
+LINKER=$(TOOLCHAIN)/bin/$(ARCH)-g++
+MAKE_APPL = $(TOOLCHAIN)/bin/MakeAPPL
 
-CC=~/bin/mpw sc
-LINKER=~/bin/mpw link
+CFLAGS=-I$(TOOLCHAIN)/$(ARCH)/include
+CFLAGS+=-O3 -Wno-multichar
+#LFLAGS=-d -c 'HCC ' -t APPL -mf
+LFLAGS = -Wl,-elf2flt -Wl,-q -Wl,-Map=linkmap.txt -Wl,-undefined=consolewrite
 
-CFLAGS=-i $(MPWROOT)/Interfaces\&Libraries/Interfaces/CIncludes
-LFLAGS=-d -c 'HCC ' -t APPL -mf
+LIBRARIES=-lretrocrt
 
-LIBRARIES=lib/Stubs.o lib/MacRuntime.o lib/IntEnv.o lib/Interface.o lib/ToolLibs.o
-CLIBRARIES=clib/StdCLib.o
-
-SOURCES=MPWTest.c
+SOURCES=Retro68Test.c
 OBJECTS=$(SOURCES:.c=.o)
-RFILES=MPWTest.r
-EXECUTABLE=MPWTest.68k
+#RFILES=Retro68Test.r
+EXECUTABLE=Retro68Test.68k
+DISK=Retro68Test.dsk
+BIN=Retro68Test.bin
 
-all: $(SOURCES) $(EXECUTABLE)
+all: $(SOURCES) $(DISK)
 
 $(EXECUTABLE): $(OBJECTS)
-	ln -fs $(LIBRARYDIR) lib
-	ln -fs $(CLIBRARYDIR) clib
-	$(LINKER) $(LFLAGS) $(OBJECTS) $(LIBRARIES) $(CLIBRARIES) -o $@
-	Rez -rd $(RFILES) -o $@ -i $(RINCLUDES) -append
-	open .
+	$(LINKER) $(LFLAGS) $(OBJECTS) $(LIBRARIES) -o $@
+	#Rez -rd $(RFILES) -o $@ -i $(RINCLUDES) -append
+
+%.dsk %.bin: %.68k
+	$(MAKE_APPL) -c $< -o $*
 
 .c.o:
 	$(CC) $(CFLAGS) $< -o $@
 	
 clean:
-	rm -rf *o $(EXECUTABLE)
+	rm -rf *o $(EXECUTABLE) $(DISK) $(BIN)

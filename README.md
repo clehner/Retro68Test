@@ -3,10 +3,12 @@ About
 
 Simple Mac Toolbox app that uses API compatible with original Mac OS (runs on System 1.1).
 
-Compiles using the [MPW compatibility layer](https://github.com/ksherlock/mpw).
+Compiles using the [Retro68 GCC toolchain](https://github.com/autc04/Retro68).
 
-Screenshot
-=============
+Adapted from [MPWTest](https://github.com/steventroughtonsmith/MPWTest) which
+uses the [mpw compatibility layer](https://github.com/ksherlock/mpw)
 
-[![](https://lh4.googleusercontent.com/-hkuUAysqkHg/U4FuIfPuGTI/AAAAAAAABQ0/2OwJHAJphp8/w1252-h956-no/Screen+Shot+2014-05-25+at+03.13.34.jpg)](https://lh4.googleusercontent.com/-hkuUAysqkHg/U4FuIfPuGTI/AAAAAAAABQ0/2OwJHAJphp8/w1252-h956-no/Screen+Shot+2014-05-25+at+03.13.34.jpg)
+## Todo
 
+- Fix compiler errors about headers
+- Add resource fork
