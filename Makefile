@@ -10,8 +10,7 @@ CC=$(TOOLCHAIN)/bin/$(ARCH)-gcc
 LINKER=$(TOOLCHAIN)/bin/$(ARCH)-g++
 MAKE_APPL = $(TOOLCHAIN)/bin/MakeAPPL
 
-CFLAGS=-I$(TOOLCHAIN)/$(ARCH)/include
-CFLAGS+=-O3 -Wno-multichar
+CFLAGS=-O3 -Wno-multichar
 #LFLAGS=-d -c 'HCC ' -t APPL -mf
 LFLAGS = -Wl,-elf2flt -Wl,-q -Wl,-Map=linkmap.txt -Wl,-undefined=consolewrite
 
@@ -34,7 +33,7 @@ $(EXECUTABLE): $(OBJECTS)
 	$(MAKE_APPL) -c $< -o $*
 
 .c.o:
-	$(CC) $(CFLAGS) $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 	
 clean:
 	rm -rf *o $(EXECUTABLE) $(DISK) $(BIN)
