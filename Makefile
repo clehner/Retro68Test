@@ -25,15 +25,14 @@ BIN=Retro68Test.bin
 
 RSRC_HEX=$(wildcard rsrc/*/*.hex)
 RSRC_DAT=$(RSRC_HEX:.hex=.dat)
-RSRC_ARGS:=
 
 all: $(SOURCES) $(DISK)
 
 $(EXECUTABLE): $(OBJECTS)
 	$(LINKER) $(LFLAGS) $(OBJECTS) $(LIBRARIES) -o $@
 
-%.dsk %.bin: %.68k %.rsrc-args
-	$(MAKE_APPL) -c $< -o $* $(shell cat $*.rsrc-args)
+%.dsk %.bin: %.68k rsrc-args
+	$(MAKE_APPL) -c $< -o $* $(shell cat rsrc-args)
 
 .c.o:
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -43,7 +42,7 @@ rsrc: $(RSRC_DAT) rsrc-args
 rsrc/%.dat: rsrc/%.hex
 	$(FROM_HEX) $< > $@
 
-%.rsrc-args: $(RSRC_DAT)
+rsrc-args: $(RSRC_DAT)
 	@cd rsrc && for code in *; do \
 		echo -n "-t $$code "; \
 		cd "$$code" && for file in *.dat; do \
@@ -53,4 +52,4 @@ rsrc/%.dat: rsrc/%.hex
 	done > ../$@
 
 clean:
-	rm -rf *.o $(EXECUTABLE) $(DISK) $(BIN) $(RSRC_DAT) *.rsrc-args
+	rm -rf *.o $(EXECUTABLE) $(DISK) $(BIN) $(RSRC_DAT) rsrc-args
