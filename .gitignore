@@ -4,5 +4,6 @@ lib
 *.gdb
 *.dsk
 *.bin
+linkmap.txt
 rsrc-args
 rsrc/*/*.dat

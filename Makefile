@@ -56,7 +56,7 @@ rsrc-args: $(RSRC_DAT)
 	done > ../$@
 
 clean:
-	rm -rf *.o $(EXECUTABLE) $(DISK) $(BIN) $(RSRC_DAT) rsrc-args
+	rm -rf *.o $(EXECUTABLE) $(DISK) $(BIN) $(RSRC_DAT) rsrc-args linkmap.txt
 
 run: all
 	$(MINI_VMAC) $(MINI_VMAC_LAUNCHER_DISK) $(DISK)
