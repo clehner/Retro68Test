@@ -8,7 +8,8 @@ ARCH=m68k-unknown-elf
 
 CC=$(TOOLCHAIN)/bin/$(ARCH)-gcc
 LINKER=$(TOOLCHAIN)/bin/$(ARCH)-g++
-MAKE_APPL = $(TOOLCHAIN)/bin/MakeAPPL
+MAKE_APPL=$(TOOLCHAIN)/bin/MakeAPPL
+FROM_HEX=xxd -r
 
 CFLAGS=-O3 -Wno-multichar
 #LFLAGS=-d -c 'HCC ' -t APPL -mf
@@ -18,22 +19,38 @@ LIBRARIES=-lretrocrt
 
 SOURCES=Retro68Test.c
 OBJECTS=$(SOURCES:.c=.o)
-#RFILES=Retro68Test.r
 EXECUTABLE=Retro68Test.68k
 DISK=Retro68Test.dsk
 BIN=Retro68Test.bin
+
+RSRC_HEX=$(wildcard rsrc/*/*.hex)
+RSRC_DAT=$(RSRC_HEX:.hex=.dat)
+RSRC_ARGS:=
 
 all: $(SOURCES) $(DISK)
 
 $(EXECUTABLE): $(OBJECTS)
 	$(LINKER) $(LFLAGS) $(OBJECTS) $(LIBRARIES) -o $@
-	#Rez -rd $(RFILES) -o $@ -i $(RINCLUDES) -append
 
-%.dsk %.bin: %.68k
-	$(MAKE_APPL) -c $< -o $*
+%.dsk %.bin: %.68k %.rsrc-args
+	$(MAKE_APPL) -c $< -o $* $(shell cat $*.rsrc-args)
 
 .c.o:
 	$(CC) $(CFLAGS) -c $< -o $@
-	
+
+rsrc: $(RSRC_DAT) rsrc-args
+
+rsrc/%.dat: rsrc/%.hex
+	$(FROM_HEX) $< > $@
+
+%.rsrc-args: $(RSRC_DAT)
+	@cd rsrc && for code in *; do \
+		echo -n "-t $$code "; \
+		cd "$$code" && for file in *.dat; do \
+			echo -n "-r $${file%.dat} rsrc/$$code/$$file "; \
+		done; \
+		cd ..; \
+	done > ../$@
+
 clean:
-	rm -rf *o $(EXECUTABLE) $(DISK) $(BIN)
+	rm -rf *.o $(EXECUTABLE) $(DISK) $(BIN) $(RSRC_DAT) *.rsrc-args
