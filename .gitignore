@@ -1,6 +1,8 @@
 lib
 *.o
 *.68k
+*.gdb
 *.dsk
 *.bin
 rsrc-args
+rsrc/*/*.dat
