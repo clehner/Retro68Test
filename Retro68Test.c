@@ -154,6 +154,14 @@ void RunLoop()
 							break;
 						}
 
+						case inGoAway:
+						{
+							if (TrackGoAway(whichWindow, theEvent.where)) {
+								quit = true;
+							}
+							break;
+						}
+
 						default:
 							break;
 					}
